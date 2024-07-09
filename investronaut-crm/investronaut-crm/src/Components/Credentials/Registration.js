@@ -9,7 +9,6 @@ import visible from "../../Assets/visible.png";
 import CredentialData from "../../Json-Data/Credentials-Data/Credentials_Data.json";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import PhoneInput from 'react-phone-number-input'
 //Admin Role
 
 function Registration() {
@@ -26,21 +25,36 @@ function Registration() {
   //SignUp Label UseState
   const [labels, setlabels] = useState({});
   const [btnDisabled, setbtnDisabled] = useState(true);
-
+  const [mobileVerify, setmobileVerify] = useState("");
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setformData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    let sanitizedValue = value;
+    // console.log(sanitizedValue)
+
+    if (name === "phoneNumber") {
+      sanitizedValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+      // console.log('replace')
+    }
+
+    if(name === 'phoneNumber'){
+    if (sanitizedValue.length === 10) {
+      setmobileVerify("verify");
+    } else {
+      setmobileVerify("");
+    }
+  }
+    setformData({
+      ...formData,
+      [name]: sanitizedValue,
+    });
   };
 
   const handleDataSubmit = (e) => {
     e.preventDefault();
     const nameRegex = /^[a-zA-Z\s]{3,}$/;
-
-    if (nameRegex.test(formData.fullName)) {
-      toast.success("Registration success", {
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
+    if (!nameRegex.test(formData.fullName)) {
+      toast.error("Fullname must contain letters", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -49,19 +63,51 @@ function Registration() {
         progress: undefined,
         theme: "light",
       });
-      console.log(formData);
-    } else {
-      toast.error("Fullname must contain letters", {
-        position: "top-right",
+      return;
+    }
+    if (formData.createPassword !== formData.confirmPassword) {
+      toast.warn("Password and Confirm pasword should be same", {
+        position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
-        pauseOnHover: true,
         draggable: true,
         progress: undefined,
         theme: "light",
       });
+      return;
     }
+
+    if (
+      !passwordRegex.test(formData.createPassword) &&
+      !passwordRegex.test(formData.confirmPassword)
+    ) {
+      toast.warn(
+        "Password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, and one number.",
+        {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        }
+      );
+      return;
+    }
+
+    toast.success("Registration success!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+    console.log(formData);
   };
 
   const handleToggle = () => {
@@ -83,6 +129,14 @@ function Registration() {
     setbtnDisabled(!isFormValid);
   }, [formData]);
 
+  function restrictNumber(e) {
+    let x = e.which || e.keycode;
+    if (x >= 48 && x <= 57) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   return (
     <>
       <div className="registration_wrapper vh-100">
@@ -131,19 +185,25 @@ function Registration() {
                         <label htmlFor="Number" className="form-label">
                           {labels.SignUp.PhoneNumber}
                         </label>
-                        <input
-                          type="number"
-                          className="form-control"
-                          id="phoneNumber"
-                          aria-describedby="phoneNumber"
-                          placeholder="Enter your Phone Number"
-                          name="phoneNumber"
-                          value={formData.phoneNumber}
-                          onChange={handleChange}
-                        />
+                        <div className="country_phone d-flex align-items-center position-relative">
+                          <div className="county_code">+91</div>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="phoneNumber"
+                            aria-describedby="phoneNumber"
+                            placeholder="Enter your Phone Number"
+                            name="phoneNumber"
+                            value={formData.phoneNumber}
+                            onChange={handleChange}
+                            maxLength="10"
+                            onKeyUp={(event) => {
+                              return restrictNumber(event);
+                            }}
+                          />
+                          <span>{mobileVerify}</span>
+                        </div>
                       </div>
-
-                
 
                       <div className="mb-2">
                         <label htmlFor="text" className="form-label">
