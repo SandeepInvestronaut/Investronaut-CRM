@@ -1,10 +1,11 @@
-import logo from './logo.svg';
+ 
 import './App.css';
+import Registration from './Components/Credentials/Registration';
 
 function App() {
   return (
      <>
-     <p>Hello!</p>
+     <Registration/>
      </>
   );
 }
