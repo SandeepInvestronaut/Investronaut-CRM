@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Registration.css";
+import "../../Theme/Lightmode.css";
 
 import registerImg from "../../Assets/register_img.png";
 import crmLogo from "../../Assets/crm_logo.png";
@@ -9,6 +10,8 @@ import visible from "../../Assets/visible.png";
 import CredentialData from "../../Json-Data/Credentials-Data/Credentials_Data.json";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import OtpInput from 'react-otp-input';
+ 
 //Admin Role
 
 function Registration() {
@@ -26,6 +29,8 @@ function Registration() {
   const [labels, setlabels] = useState({});
   const [btnDisabled, setbtnDisabled] = useState(true);
   const [mobileVerify, setmobileVerify] = useState("");
+  const [getOtp, setgetOtp] = useState('');
+  const [verifyBtndisabled, setverifyBtndisabled] = useState(true)
   const handleChange = (e) => {
     const { name, value } = e.target;
     let sanitizedValue = value;
@@ -36,13 +41,13 @@ function Registration() {
       // console.log('replace')
     }
 
-    if(name === 'phoneNumber'){
-    if (sanitizedValue.length === 10) {
-      setmobileVerify("verify");
-    } else {
-      setmobileVerify("");
+    if (name === 'phoneNumber') {
+      if (sanitizedValue.length === 10) {
+        setmobileVerify("verify");
+      } else {
+        setmobileVerify("");
+      }
     }
-  }
     setformData({
       ...formData,
       [name]: sanitizedValue,
@@ -137,6 +142,19 @@ function Registration() {
       return false;
     }
   }
+
+  const restrictOTP = (char) => {
+    return /^\d$/.test(char);
+  };
+  ;
+  const getOTPhandler = (otp) => {
+    const filteredOtp = otp.split('').filter(restrictOTP).join('');
+    setgetOtp(filteredOtp);
+    setverifyBtndisabled(filteredOtp.length !== 4);
+  };
+  const mobileOTPverify = () => {
+    alert(getOtp);
+  }
   return (
     <>
       <div className="registration_wrapper vh-100">
@@ -201,7 +219,7 @@ function Registration() {
                               return restrictNumber(event);
                             }}
                           />
-                          <span>{mobileVerify}</span>
+                          <span data-bs-toggle="modal" data-bs-target="#exampleModal">{mobileVerify}</span>
                         </div>
                       </div>
 
@@ -279,6 +297,37 @@ function Registration() {
           </div>
         </div>
       </div>
+
+      {labels.GetOTP && (
+
+        <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body d-flex flex-column align-items-center justify-content-center text-center gap-2">
+                <h5 className="modal-title" id="exampleModalLabel">{labels.GetOTP.Title}</h5>
+                <p className="p-0">{labels.GetOTP.Text}</p>
+                <div className="otp-input-flex">
+                  <OtpInput className="d-flex gap-2 otp_input"
+                    value={getOtp}
+                    onChange={getOTPhandler}
+                    numInputs={4}
+                    renderInput={(inputProps, index) => <input{...inputProps} key={index} />}
+
+                  />
+                  <p>{labels.GetOTP.ResendOTPMSG} <span>{labels.GetOTP.ResendOTP}</span></p>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-primary" onClick={mobileOTPverify} disabled={verifyBtndisabled}>{labels.GetOTP.VerifyButton}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

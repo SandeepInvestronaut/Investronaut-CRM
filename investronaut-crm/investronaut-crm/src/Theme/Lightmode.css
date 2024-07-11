@@ -1,0 +1,14 @@
+:root{
+    --screenBgcolor :#FFFFFF;
+
+/*Form Variables*/
+    --registerBgcolor:white;
+    --formTitlecolor:#53389e;
+    --formSubtitlecolor:#707070;
+    --formLabelcolor:#4a4a4a;
+    --formInputBgcolor:#fff;
+    --formCountryBgcolor:#e6e6e6;
+    --formPrimatyBgcolor:linear-gradient(#53389E, #7F56D9);
+    --formSliderBgcolor:#edfbff;
+    --countryTextcolor:black;
+}
