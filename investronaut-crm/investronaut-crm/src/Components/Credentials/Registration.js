@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./Registration.css";
-// import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
+import { useNavigate } from "react-router-dom";
 
 /* ligh mode */
 import "../../Theme/Lightmode.css";
+import "../../Theme/Global.css";
 import crmLogo from "../../Assets/crm_logo.png";
 import hide from "../../Assets/hide.png";
 import visible from "../../Assets/visible.png";
@@ -21,6 +23,7 @@ import Button from "react-bootstrap/Button";
 //Common Signup Page
 
 function Registration() {
+  const navigate = useNavigate();
   //SignUp UseState
   const [formData, setformData] = useState({
     fullName: "",
@@ -66,7 +69,6 @@ function Registration() {
   //manage changes in form input fields/get all form input values
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     let sanitizedValue = value;
     if (name === "phoneNumber") {
       sanitizedValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
@@ -101,6 +103,7 @@ function Registration() {
     const nameRegex = /^[a-zA-Z]+ [a-zA-Z]+$/;
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!nameRegex.test(formData.fullName)) {
       toast.error("Please enter your full name, e.g., John Doe.", {
         position: "top-center",
@@ -171,19 +174,6 @@ function Registration() {
       return;
     }
 
-    if (mobileVerify !== "Verified") {
-      toast.error("Please verify mobile number", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      return;
-    }
-
     if (emailverifyTag !== "Verified") {
       toast.error("Please verify email", {
         position: "top-center",
@@ -197,8 +187,22 @@ function Registration() {
       return;
     }
 
+
+    if (mobileVerify !== "Verified") {
+      toast.error("Please verify mobile number", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+
     toast.success("Registration success!", {
-      position: "top-right",
+      position: "top-center",
       autoClose: 5000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -207,7 +211,18 @@ function Registration() {
       progress: undefined,
       theme: "light",
     });
-    console.log(formData);
+    // console.log(formData);
+
+    const saltRounds = 10;
+    const hashedPassword = bcrypt.hashSync(formData.createPassword, saltRounds);
+
+    // Update formData with hashed passwords
+    const encryptData = {
+      ...formData,
+      createPassword: hashedPassword,
+      confirmPassword: hashedPassword, // This is optional; usually, you don't need to send confirmPassword
+    };
+    console.log(encryptData);
   };
 
   //show password hide password handler
@@ -414,7 +429,7 @@ function Registration() {
                             className="form-control"
                             id="fullName"
                             aria-describedby="fullName"
-                            placeholder="Enter your First name"
+                            placeholder={labels.SignUp.FullNamePlacholder}
                             name="fullName"
                             value={formData.fullName}
                             onChange={handleChange}
@@ -431,7 +446,7 @@ function Registration() {
                               className="form-control"
                               id="email"
                               aria-describedby="email"
-                              placeholder="Enter your Email"
+                              placeholder={labels.SignUp.EmailPlaceholder}
                               name="email"
                               value={formData.email}
                               onChange={handleChange}
@@ -460,7 +475,7 @@ function Registration() {
                               className="form-control"
                               id="phoneNumber"
                               aria-describedby="phoneNumber"
-                              placeholder="Enter your Phone Number"
+                              placeholder={labels.SignUp.PhoneNumberPlaceholder}
                               name="phoneNumber"
                               value={formData.phoneNumber}
                               onChange={handleChange}
@@ -536,7 +551,11 @@ function Registration() {
                         </button>
                         <p className="login_text">
                           {labels.SignUp.AlreadyLogin}
-                          <span> {labels.SignUp.LoginButton}</span>
+                          {/* <span> {labels.SignUp.LoginButton}</span> */}
+                          <span
+                            onClick={() => navigate("/login")}>
+                            {labels.SignUp.LoginButton}
+                          </span>
                         </p>
                         <ToastContainer />
                       </form>

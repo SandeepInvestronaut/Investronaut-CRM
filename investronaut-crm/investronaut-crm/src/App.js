@@ -1,12 +1,21 @@
  
 import './App.css';
-import Registration from './Components/Credentials/Registration';
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
+
+import Signup from './Components/Credentials/Registration';
+import Login from './Components/Credentials/Login';
+
 
 function App() {
   
   return (
      <>
-     <Registration/>
+     <BrowserRouter>
+     <Routes>
+     <Route path ="/" element={<Signup/>}></Route>
+      <Route path ="/login" element={<Login/>}></Route>
+     </Routes>
+     </BrowserRouter>
      </>
   );
 }
