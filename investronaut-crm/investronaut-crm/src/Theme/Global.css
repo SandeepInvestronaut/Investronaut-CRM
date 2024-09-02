@@ -78,3 +78,32 @@ form button img {
     border: none;
     cursor: pointer;
 }
+h5#exampleModalLabel {
+  color: var(--formTitlecolor);
+  font-weight: 500;
+  font-size: 22px;
+}
+
+.modal-body {
+  padding: 20px 30px;
+}
+
+
+.otp-input-flex .invalid_otp {
+  border: 1px solid red !important;
+  box-shadow: none !important;
+}
+
+ 
+.modal-footer button {
+  background-image: var(--formPrimatyBgcolor);
+  padding: 10px 80px;
+  font-weight: 500;
+  border: none;
+  margin: 0 auto;
+}
+
+.form-check-label{
+  color: rgba(74, 74, 74, 1);
+  font-size: 14px;
+}

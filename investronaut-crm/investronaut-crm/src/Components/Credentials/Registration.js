@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef  } from "react";
 import "./Registration.css";
 import bcrypt from "bcryptjs";
 import { useNavigate } from "react-router-dom";
@@ -35,6 +35,7 @@ function Registration() {
   //Show Hide Password UseState
   const [showPassword, setShowPassword] = useState(false);
   //SignUp Label state
+    //geting all login lable data from CredentialData.json file handler
   const [labels, setlabels] = useState({});
   //Signup form btn disbabled state
   const [btnDisabled, setbtnDisabled] = useState(true);
@@ -65,6 +66,9 @@ function Registration() {
   const [MobileOtpAttempt, setMobileOtpAttempt] = useState(3);
   //Signup email opt attempt state = 3
   const [EmailOtpAttempt, setEmailOtpAttempt] = useState(3);
+
+  const emobileOTPModallRef = useRef(null);
+  const emailOTPModalRef = useRef(null);
 
   //manage changes in form input fields/get all form input values
   const handleChange = (e) => {
@@ -264,23 +268,25 @@ function Registration() {
 
   //dignup mobile otp modal auto dismis handler
   const handleDismiss = () => {
-    const Emailmodal = document.getElementById("emailOTPModal");
-    const Mobilemodal = document.getElementById("mobileOTPModal");
+    const emailModal = emobileOTPModallRef.current;
+    const mobileModal = emailOTPModalRef.current;
+
     const modalBackdrop = document.querySelector(".modal-backdrop");
 
-    // Check if the modals exist before trying to manipulate them
-    if (Emailmodal) {
-      Emailmodal.classList.remove("show");
-      Emailmodal.style.display = "none";
+    // Hide email modal if it exists
+    if (emailModal) {
+      emailModal.classList.remove("show");
+      emailModal.style.display = "none";
     }
 
-    if (Mobilemodal) {
-      Mobilemodal.classList.remove("show");
-      Mobilemodal.style.display = "none";
+    // Hide mobile modal if it exists
+    if (mobileModal) {
+      mobileModal.classList.remove("show");
+      mobileModal.style.display = "none";
     }
 
     // Remove modal-related classes from the body
-    if (Emailmodal || Mobilemodal) {
+    if (emailModal || mobileModal) {
       document.body.classList.remove("modal-open");
       document.body.style.removeProperty("overflow");
       document.body.style.removeProperty("padding-right");
@@ -294,6 +300,7 @@ function Registration() {
     setDismissModal("modal");
     console.log("Modal closed");
   };
+
 
   //get signup mobile otp and perform validation on it handler
   const getOTPhandler = (otp) => {
@@ -586,6 +593,7 @@ function Registration() {
             <div
               className="modal fade"
               id="mobileOTPModal"
+              ref={emailOTPModalRef}
               tabIndex="-1"
               aria-labelledby="exampleModalLabel"
               aria-hidden="true"
@@ -601,12 +609,12 @@ function Registration() {
                       aria-label="Close"
                     ></button>
                   </div>
-                  <div className="modal-body d-flex flex-column align-items-center justify-content-center text-center gap-2">
+                  <div className="modal-body d-flex flex-column gap-1">
                     <h5 className="modal-title" id="exampleModalLabel">
                       {labels.GetOTP.Title}
                     </h5>
                     <p className="p-0">{labels.GetOTP.Text}</p>
-                    <div className="otp-input-flex">
+                    <div className="otp-input-flex d-flex flex-column gap-4 mt-3">
                       <OtpInput
                         className="d-flex gap-2 otp_input"
                         value={getOtp}
@@ -620,13 +628,10 @@ function Registration() {
                           />
                         )}
                       />
-                      <p>
-                        {labels.GetOTP.ResendOTPMSG}{" "}
-                        <span>{labels.GetOTP.ResendOTP}</span>
-                      </p>
+                      
                     </div>
                   </div>
-                  <div className="modal-footer">
+                  <div className="modal-footer d-flex flex-column justify-content-between border-0 p-1">
                     <button
                       type="button"
                       className="btn btn-primary"
@@ -643,6 +648,10 @@ function Registration() {
                         labels.GetOTP.VerifyButton
                       )}
                     </button>
+                    <p  className="d-flex justify-content-between w-100">
+                        {labels.GetOTP.ResendOTPMSG}{" "}
+                        <span>{labels.GetOTP.ResendOTP}</span>
+                      </p>
                   </div>
                 </div>
               </div>
@@ -653,6 +662,7 @@ function Registration() {
             <div
               className="modal fade"
               id="emailOTPModal"
+              ref={emobileOTPModallRef}
               tabIndex="-1"
               aria-labelledby="exampleModalLabel"
               aria-hidden="true"
@@ -668,12 +678,12 @@ function Registration() {
                       aria-label="Close"
                     ></button>
                   </div>
-                  <div className="modal-body d-flex flex-column align-items-center justify-content-center text-center gap-2">
+                  <div className="modal-body d-flex flex-column gap-1">
                     <h5 className="modal-title" id="exampleModalLabel">
                       {labels.GetOTP.Title2}
                     </h5>
                     <p className="p-0">{labels.GetOTP.Text2}</p>
-                    <div className="otp-input-flex">
+                    <div className="otp-input-flex d-flex flex-column gap-4 mt-3">
                       <OtpInput
                         className="d-flex gap-2 otp_input"
                         value={getOtp}
@@ -687,13 +697,10 @@ function Registration() {
                           />
                         )}
                       />
-                      <p>
-                        {labels.GetOTP.ResendOTPMSG}{" "}
-                        <span>{labels.GetOTP.ResendOTP}</span>
-                      </p>
+                      
                     </div>
                   </div>
-                  <div className="modal-footer">
+                  <div className="modal-footer d-flex flex-column justify-content-between border-0 p-1">
                     <button
                       type="button"
                       className="btn btn-primary"
@@ -710,6 +717,10 @@ function Registration() {
                         labels.GetOTP.VerifyButton
                       )}
                     </button>
+                    <p className="d-flex justify-content-between w-100">
+                        {labels.GetOTP.ResendOTPMSG}{" "}
+                        <span>{labels.GetOTP.ResendOTP}</span>
+                      </p>
                   </div>
                 </div>
               </div>
